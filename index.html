@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<title>15 Puzzle</title>
+<style>
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #111;
+    font-family: Arial, sans-serif;
+}
+
+#game {
+    display: grid;
+    grid-template-columns: repeat(4, 80px);
+    gap: 5px;
+}
+
+.tile {
+    width: 80px;
+    height: 80px;
+    background: #4caf50;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.empty {
+    background: transparent;
+    cursor: default;
+}
+</style>
+</head>
+<body>
+
+<div id="game"></div>
+
+<script>
+const size = 4;
+let tiles = [];
+
+function init() {
+    tiles = [];
+    for (let i = 1; i < size * size; i++) tiles.push(i);
+    tiles.push(0);
+    shuffle();
+    draw();
+}
+
+function shuffle() {
+    for (let i = tiles.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+    }
+}
+
+function draw() {
+    const game = document.getElementById("game");
+    game.innerHTML = "";
+    tiles.forEach((num, i) => {
+        const div = document.createElement("div");
+        div.className = "tile";
+        if (num === 0) {
+            div.classList.add("empty");
+        } else {
+            div.textContent = num;
+            div.onclick = () => move(i);
+        }
+        game.appendChild(div);
+    });
+}
+
+function move(index) {
+    const empty = tiles.indexOf(0);
+    const x1 = index % size;
+    const y1 = Math.floor(index / size);
+    const x2 = empty % size;
+    const y2 = Math.floor(empty / size);
+
+    if (Math.abs(x1 - x2) + Math.abs(y1 - y2) === 1) {
+        [tiles[index], tiles[empty]] = [tiles[empty], tiles[index]];
+        draw();
+        checkWin();
+    }
+}
+
+function checkWin() {
+    for (let i = 0; i < tiles.length - 1; i++) {
+        if (tiles[i] !== i + 1) return;
+    }
+    alert("YUTDING 🎉");
+}
+
+init();
+</script>
+
+</body>
+</html>
